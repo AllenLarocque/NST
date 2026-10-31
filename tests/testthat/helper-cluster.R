@@ -29,11 +29,3 @@ withLibWorkers <- function(code) {
     makeCluster = function(...) real(..., rscript_args = libs),
     .package = "parallel")
 }
-
-# NST imports iCAMP, so the iCAMP fork (with `cl =`) must be loaded BEFORE
-# test_local() runs load_all() on NST. Run the suite from /workspace as:
-#   Rscript -e 'pkgload::load_all("scratch/forks/iCAMP"); testthat::test_local("scratch/forks/NST")'
-# If it was not preloaded, load it here (best effort).
-if (as.character(utils::packageVersion("iCAMP")) != "1.9.1.9001") {
-  pkgload::load_all("../../../iCAMP", quiet = TRUE)
-}
