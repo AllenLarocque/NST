@@ -11,7 +11,7 @@ pNST(comm, tree=NULL, pd=NULL,pd.desc=NULL,pd.wd=NULL,pd.spname=NULL,
      group, meta.group=NULL, abundance.weighted=TRUE, rand=1000,
      output.rand=FALSE, taxo.null.model=NULL, phylo.shuffle=TRUE,
      exclude.conspecifics=FALSE, nworker=4, LB=FALSE,
-     between.group=FALSE, SES=FALSE, RC=FALSE, dirichlet=FALSE)
+     between.group=FALSE, SES=FALSE, RC=FALSE, dirichlet=FALSE, cl=NULL)
 }
 \arguments{
   \item{comm}{matrix or data.frame, community data, rows are samples/sites, colnames are taxa (species/OTUs/ASVs)}
@@ -34,6 +34,7 @@ pNST(comm, tree=NULL, pd=NULL,pd.desc=NULL,pd.wd=NULL,pd.spname=NULL,
   \item{SES}{Logic, whether to calculate standardized effect size, which is (observed dissimilarity - mean of null dissimilarity)/standard deviation of null dissimilarity. default is FALSE.}
   \item{RC}{Logic, whether to calculate modified Raup-Crick metric, which is percentage of null dissimilarity lower than observed dissimilarity x 2 - 1. default is FALSE.}
   \item{dirichlet}{Logic. If TRUE, the taxonomic null model will use Dirichlet distribution to generate relative abundances in randomized community matrix. If the input community matrix has all row sums no more than 1, the function will automatically set dirichlet=TRUE. default is FALSE.}
+  \item{cl}{Optional cluster from \code{parallel::makeCluster()}. If given, it replaces every cluster this function would create, \code{nworker} is taken from its size, and it is not stopped. With a 1-worker cluster, functions that have a serial path use that path instead. For reproducible results, call \code{set.seed()} and \code{parallel::clusterSetRNGStream()} before each call. \code{LB = TRUE} schedules tasks dynamically; results are then not reproducible even with a seeded cluster.}
 }
 \details{
 NST is a metric to estimate ecological stochasticity based on null model analysis of dissimilarity (Ning et al 2019). NST is improved from previous index ST (Zhou et al 2014). Modified stochasticity ratio (MST) is also calculated (Liang et al 2020; Guo et al 2018), which can be regarded as a spcial transformation of NST under assumption that observed similarity can be equal to mean of null similarity under pure stochastic assembly.

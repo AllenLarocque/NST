@@ -13,7 +13,7 @@ tNST(comm, group, meta.group=NULL,
      rand=1000, output.rand=FALSE, nworker=4,
      LB=FALSE, null.model="PF", dirichlet=FALSE,
      between.group=FALSE, SES=FALSE, RC=FALSE,
-     transform.method=NULL, logbase=2)
+     transform.method=NULL, logbase=2, cl=NULL)
 }
 
 \arguments{
@@ -35,6 +35,7 @@ tNST(comm, group, meta.group=NULL,
   \item{RC}{Logic, whether to calculate modified Raup-Crick metric, which is percentage of null dissimilarity lower than observed dissimilarity x 2 - 1. default is FALSE.}
   \item{transform.method}{character or a defined function, to specify how to transform community matrix before calculating dissimilarity. if it is a characher, it should be a method name as in the function 'decostand' in package 'vegan', including 'total','max','freq','normalize','range','standardize','pa','chi.square','cmdscale','hellinger','log'.}
   \item{logbase}{numeric, the logarithm base used when transform.method='log'.}
+  \item{cl}{Optional cluster from \code{parallel::makeCluster()}. If given, it replaces every cluster this function would create, \code{nworker} is taken from its size, and it is not stopped. With a 1-worker cluster, functions that have a serial path use that path instead. For reproducible results, call \code{set.seed()} and \code{parallel::clusterSetRNGStream()} before each call. \code{LB = TRUE} schedules tasks dynamically; results are then not reproducible even with a seeded cluster.}
 }
 \details{
 NST is a metric to estimate ecological stochasticity based on null model analysis of dissimilarity. It is improved from previous index ST (Zhou et al 2014). Detailed description is in Ning et al (2019). Modified stochasticity ratio (MST) is also calculated (Liang et al 2020; Guo et al 2018), which can be regarded as a spcial transformation of NST under assumption that observed similarity can be equal to mean of null similarity under pure stochastic assembly.}

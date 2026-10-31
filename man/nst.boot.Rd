@@ -9,7 +9,7 @@ To test the distribution of ST and NST in each group, and the significance of ST
 \usage{
 nst.boot(nst.result, group=NULL, rand=999, trace=TRUE,
          two.tail=FALSE, out.detail=FALSE, between.group=FALSE,
-         nworker=1, SES=FALSE, RC=FALSE)
+         nworker=1, SES=FALSE, RC=FALSE, cl=NULL)
 }
 \arguments{
   \item{nst.result}{list object, the output of tNST, must have "details", thus the output.rand must be TRUE in tNST function.}
@@ -22,6 +22,7 @@ nst.boot(nst.result, group=NULL, rand=999, trace=TRUE,
   \item{nworker}{for parallel computing. Either a character vector of host names on which to run the worker copies of R, or a positive integer (in which case that number of copies is run on localhost). default is 1, means not to use parallel computing.}
   \item{SES}{Logic, whether to perform bootstrapping test for standardized effect size (SES). SES is (observed dissimilarity - mean of null dissimilarity)/standard deviation of null dissimilarity. default is FALSE.}
   \item{RC}{Logic, whether to perform bootstrapping test for modified Raup-Crick metric (RC). RC is percentage of null dissimilarity lower than observed dissimilarity x 2 - 1. default is FALSE.}
+  \item{cl}{Optional cluster from \code{parallel::makeCluster()}. If given, it replaces every cluster this function would create, \code{nworker} is taken from its size, and it is not stopped. With a 1-worker cluster, functions that have a serial path use that path instead. For reproducible results, call \code{set.seed()} and \code{parallel::clusterSetRNGStream()} before each call.}
 }
 \details{
 Normalized stochasticity ratio (NST, Ning et al 2019) is a index to estimate average stochasticity within a group of samples. Bootstrapping is an excellent method to evaluate the statistical variation. Since the observed/null dissimilarity values are not independent (pairwise comparisons), bootstrapping should be random draw of samples rather than the pairwise values. Bootstrapping for stochasticity ratio (ST, Zhou et al 2014) or SES or RC can also be performed.

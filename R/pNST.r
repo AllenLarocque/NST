@@ -2,8 +2,9 @@ pNST<-function(comm, tree=NULL, pd=NULL,pd.desc=NULL,pd.wd=NULL,pd.spname=NULL,
                group, meta.group=NULL, abundance.weighted=TRUE, rand=1000,
                output.rand=FALSE, taxo.null.model=NULL, phylo.shuffle=TRUE,
                exclude.conspecifics=FALSE, nworker=4, LB=FALSE,
-               between.group=FALSE, SES=FALSE, RC=FALSE, dirichlet=FALSE)
+               between.group=FALSE, SES=FALSE, RC=FALSE, dirichlet=FALSE, cl=NULL)
 {
+  if(!is.null(cl)) nworker <- length(cl)
   requireNamespace("iCAMP")
   if(sum(is.na(comm))>0)
   {
@@ -56,7 +57,7 @@ pNST<-function(comm, tree=NULL, pd=NULL,pd.desc=NULL,pd.wd=NULL,pd.spname=NULL,
         pd.big$pd.file="pd.desc"
         pd.big$pd.name.file="pd.taxon.name.csv"
       }else{
-        pd.big=iCAMP::pdist.big(tree = tree, wd=pd.wd, nworker = nworker)
+        pd.big=iCAMP::pdist.big(tree = tree, wd=pd.wd, nworker = nworker, cl = cl)
       }
       pd.desc=pd.big$pd.file
       pd.spname=pd.big$tip.label
@@ -215,9 +216,11 @@ pNST<-function(comm, tree=NULL, pd=NULL,pd.desc=NULL,pd.wd=NULL,pd.spname=NULL,
                     phylo.shuffle=phylo.shuffle,exclude.conspecifics=exclude.conspecifics,
                     dirichlet=dirichlet)
   }else{
+    if(is.null(cl)){
     c1<-try(parallel::makeCluster(nworker,type="PSOCK"))
     if(class(c1)[1]=='try-error'){c1 <- try(parallel::makeCluster(nworker, setup_timeout = 0.5))}
     if(class(c1)[1]=='try-error'){c1 <- try(parallel::makeCluster(nworker, setup_strategy = "sequential"))}
+    }else{c1 <- cl}
     message("Now randomizing by parallel computing. Begin at ", date(),". Please wait...")
     if(LB)
     {
@@ -237,7 +240,7 @@ pNST<-function(comm, tree=NULL, pd=NULL,pd.desc=NULL,pd.wd=NULL,pd.spname=NULL,
                                    phylo.shuffle=phylo.shuffle,exclude.conspecifics=exclude.conspecifics,
                                    dirichlet=dirichlet)
     }
-    parallel::stopCluster(c1)
+    if(is.null(cl)) parallel::stopCluster(c1)
   }
   rand.mean=apply(dist.ran, 1, mean)
   if(SES)

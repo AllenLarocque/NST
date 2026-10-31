@@ -2,8 +2,9 @@ tNST<-function(comm,group,meta.group=NULL,meta.com=NULL,meta.frequency=NULL,
                dist.method="jaccard",abundance.weighted=TRUE,
                rand=1000,output.rand=FALSE,nworker=4,LB=FALSE,
                null.model="PF",dirichlet=FALSE,between.group=FALSE,
-               SES=FALSE,RC=FALSE, transform.method=NULL, logbase=2)
+               SES=FALSE,RC=FALSE, transform.method=NULL, logbase=2,cl=NULL)
 {
+  if(!is.null(cl)) nworker <- length(cl)
   if(sum(is.na(comm))>0)
   {
     comm[is.na(comm)]=0
@@ -156,9 +157,11 @@ tNST<-function(comm,group,meta.group=NULL,meta.com=NULL,meta.frequency=NULL,
                     abundance.weighted,sp.freq,samp.rich,swap.method,
                     meta.abs,dirichlet,transform.method,logbase,meta.freqs)
   }else{
+    if(is.null(cl)){
     c1<-try(parallel::makeCluster(nworker,type="PSOCK"))
     if(class(c1)[1]=='try-error'){c1 <- try(parallel::makeCluster(nworker, setup_timeout = 0.5))}
     if(class(c1)[1]=='try-error'){c1 <- try(parallel::makeCluster(nworker, setup_strategy = "sequential"))}
+    }else{c1 <- cl}
     message("Now randomizing by parallel computing. Begin at ", date(),". Please wait...")
     if(LB)
     {
@@ -171,7 +174,7 @@ tNST<-function(comm,group,meta.group=NULL,meta.com=NULL,meta.frequency=NULL,
                                    abundance.weighted,sp.freq,samp.rich,swap.method,
                                    meta.abs,dirichlet,transform.method,logbase,meta.freqs)
     }
-    parallel::stopCluster(c1)
+    if(is.null(cl)) parallel::stopCluster(c1)
   }
   rand.mean=apply(dist.ran, 1, mean,na.rm=TRUE)
   if(SES)

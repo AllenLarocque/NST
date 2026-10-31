@@ -1,7 +1,8 @@
 nst.boot<-function(nst.result,group=NULL,rand=999,trace=TRUE,
                    two.tail=FALSE,out.detail=FALSE,between.group=FALSE,
-                   nworker=1, SES=FALSE, RC=FALSE)
+                   nworker=1, SES=FALSE, RC=FALSE, cl=NULL)
 {
+  if(!is.null(cl)) nworker <- length(cl)
   if(is.null(nst.result$details)){stop("Bootstrapping need detailed output of NST.")}
   rand.mean=nst.result$details$rand.mean
   Dmax=nst.result$details$Dmax
@@ -235,9 +236,11 @@ nst.boot<-function(nst.result,group=NULL,rand=999,trace=TRUE,
                  })
     }
   }else{
+    if(is.null(cl)){
     c1<-try(parallel::makeCluster(nworker,type="PSOCK"))
     if(class(c1)[1]=='try-error'){c1 <- try(parallel::makeCluster(nworker, setup_timeout = 0.5))}
     if(class(c1)[1]=='try-error'){c1 <- try(parallel::makeCluster(nworker, setup_strategy = "sequential"))}
+    }else{c1 <- cl}
     message("Now parallel computing within groups. begin at ", date(), ". Please wait...")
     bt1 <- parallel::parLapply(c1, ik1, nbt, group, grp.lev, obs3, dist.ran, Dmax, rand, trace, between.group, SES, RC)
     if(between.group & (length(grp.lev)>1))
@@ -245,7 +248,7 @@ nst.boot<-function(nst.result,group=NULL,rand=999,trace=TRUE,
       message("Now parallel computing between groups. begin at ", date(), ". Please wait...")
       bt2 <- parallel::parLapply(c1, ik2, nbt, group, grp.lev, obs3, dist.ran, Dmax, rand, trace, between.group, SES, RC)
     }
-    parallel::stopCluster(c1)
+    if(is.null(cl)) parallel::stopCluster(c1)
     gc()
   }
   
