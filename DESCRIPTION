@@ -3,7 +3,7 @@ Type: Package
 Title: Normalized Stochasticity Ratio
 Version: 3.1.10.9001
 Date: 2022-6-3
-Author: Daliang Ning
+Author: Daliang Ning, Allen Larocque [ctb] (cl argument)
 Maintainer: Daliang Ning <ningdaliang@ou.edu>
 Imports: vegan,parallel,permute,ape,bigmemory,iCAMP (>= 1.9.1.9001),DirichletReg
 Suggests: testthat (>= 3.0.0), withr
