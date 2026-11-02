@@ -6,6 +6,7 @@ Date: 2022-6-3
 Author: Daliang Ning, Allen Larocque [ctb] (cl argument)
 Maintainer: Daliang Ning <ningdaliang@ou.edu>
 Imports: vegan,parallel,permute,ape,bigmemory,iCAMP (>= 1.9.1.9001),DirichletReg
+Remotes: AllenLarocque/iCAMP@cl-arg
 Suggests: testthat (>= 3.0.0), withr
 Config/testthat/edition: 3
 Depends: R (>= 3.5.0)
